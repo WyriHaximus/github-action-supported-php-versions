@@ -1,0 +1,11 @@
+name: 'Supported PHP Versions'
+description: 'Fetches the currently supported PHP versions from php.net'
+branding:
+  icon: 'list'
+  color: 'green'
+outputs:
+  versions:
+    description: 'JSON array with the supported versions'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
