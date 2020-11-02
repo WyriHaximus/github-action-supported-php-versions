@@ -1,6 +1,6 @@
 name: Continuous Integration
 env:
-  DOCKER_IMAGE: wyrihaximusgithubactions/supported-php-versions
+  DOCKER_IMAGE: ghcr.io/wyrihaximus/github-action-supported-php-versions
   DOCKER_BUILDKIT: 1
 on:
   push:
@@ -89,7 +89,7 @@ jobs:
         if: contains(github.ref, 'dependabot') == false
         run: |
           echo "${{ secrets.HUB_PASSCODE }}" | \
-          docker login \
+          docker login ghcr.io \
             --username "${{ secrets.HUB_USERNAME }}" \
             --password-stdin
       - name: Push branch image to Docker Hub
