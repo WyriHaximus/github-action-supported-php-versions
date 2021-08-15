@@ -1,6 +1,6 @@
 <?php
 
-$versions = [];
+$versions = ['8.1.0beta2'];
 
 $d = new DOMDocument();
 @$d->loadHTML(file_get_contents('https://php.net/supported-versions')); // the variable $ads contains the HTML code above
