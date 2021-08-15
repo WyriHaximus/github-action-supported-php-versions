@@ -2,6 +2,10 @@
 
 $versions = [];
 
+if (getenv('INPUT_UPCOMINGRELEASES') == 'true') {
+    $versions[] = '8.1.0beta3';
+}
+
 $d = new DOMDocument();
 @$d->loadHTML(file_get_contents('https://php.net/supported-versions')); // the variable $ads contains the HTML code above
 

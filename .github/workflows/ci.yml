@@ -48,12 +48,21 @@ jobs:
         id: versions
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          milestone: "v1.0.0"
       - name: Show Versions
         run: echo "${VERSIONS}"
         env:
           VERSIONS: ${{ steps.versions.outputs.versions }}
+      - name: Fetch Versions including upcoming releases
+        uses: ./
+        id: versionsincludingupcomingreleases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upcomingReleases: true
+      - name: Show Versions including upcoming releases
+        run: echo "${VERSIONS}"
+        env:
+          VERSIONS: ${{ steps.versionsincludingupcomingreleases.outputs.versions }}
   build-docker-image:
     name: Build Docker image
     needs:
