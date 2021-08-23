@@ -3,6 +3,10 @@ description: 'Fetches the currently supported PHP versions from php.net'
 branding:
   icon: 'list'
   color: 'green'
+inputs:
+  upcomingReleases:
+    description: 'Include upcoming new major or minor releases'
+    required: false
 outputs:
   versions:
     description: 'JSON array with the supported versions'
