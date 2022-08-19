@@ -3,7 +3,7 @@
 $versions = [];
 
 if (getenv('INPUT_UPCOMINGRELEASES') == 'true') {
-    $versions[] = '8.2.0beta2';
+    $versions[] = '8.2.0beta3';
 }
 
 $d = new DOMDocument();
