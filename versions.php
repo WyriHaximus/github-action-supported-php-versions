@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $versions = [];
 
 if (getenv('INPUT_UPCOMINGRELEASES') == 'true') {
