@@ -22,4 +22,4 @@ foreach ((new DOMXPath($d))->query('//a') as $link) {
 }
 
 echo 'Found the following supported versions: ', implode(', ', $versions), PHP_EOL;
-file_put_contents(getenv('GITHUB_OUTPUT'), 'versions=' . json_encode($versions) . PHP_EOL, FILE_APPEND);
+file_put_contents(getenv('GITHUB_OUTPUT'), 'versions=' . json_encode($versions) . "\n", FILE_APPEND);
