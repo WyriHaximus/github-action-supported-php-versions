@@ -4,7 +4,7 @@ Fetches the currently supported PHP versions from php.net
 
 ## Output
 
-This action has only one output, namely `verions`, containing a JSON array with the supported versions.
+This action has only one output, namely `versions`, containing a JSON array with the supported versions.
 
 ## License ##
 
