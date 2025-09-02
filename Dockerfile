@@ -1,1 +1,1 @@
-FROM wyrihaximusgithubactions/supported-php-versions:master
+FROM wyrihaximusgithubactions/supported-php-versions:v1.33.0
