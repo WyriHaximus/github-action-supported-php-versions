@@ -14,10 +14,10 @@ $d = new DOMDocument();
 foreach ((new DOMXPath($d))->query('//a') as $link) {
     $url = $link->getAttribute('href');
 
-    if (strpos($url, '/downloads.php#v') === 0) {
+    if (str_starts_with($url, '/downloads.php?version=')) {
         $versions[] = substr(
             $url,
-            16,
+            23,
             3
         );
     }
