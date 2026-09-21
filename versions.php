@@ -5,7 +5,7 @@ declare(strict_types=1);
 $versions = [];
 
 if (getenv('INPUT_UPCOMINGRELEASES') == 'true') {
-    //$versions[] = '9.0.0RC1';
+    $versions[] = '8.6.0beta3';
 }
 
 $d = new DOMDocument();
