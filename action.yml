@@ -12,4 +12,4 @@ outputs:
     description: 'JSON array with the supported versions'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'docker://ghcr.io/wyrihaximus/github-action-supported-php-versions:master'
