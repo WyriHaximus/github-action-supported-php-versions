@@ -2,26 +2,29 @@
 
 declare(strict_types=1);
 
+function loadJsonArray(string $path): array
+{
+    if (! is_file($path)) {
+        fwrite(STDERR, "Missing required file: {$path}\n");
+        exit(1);
+    }
+
+    $decoded = json_decode((string) file_get_contents($path), true);
+    if (! is_array($decoded)) {
+        fwrite(STDERR, "Invalid JSON in {$path}\n");
+        exit(1);
+    }
+
+    return $decoded;
+}
+
 $versions = [];
 
 if (getenv('INPUT_UPCOMINGRELEASES') == 'true') {
-    $versions[] = '8.6.0beta3';
+    $versions = array_merge($versions, loadJsonArray('/app/upcoming-releases.json'));
 }
 
-$d = new DOMDocument();
-@$d->loadHTML(file_get_contents('https://php.net/supported-versions')); // the variable $ads contains the HTML code above
-
-foreach ((new DOMXPath($d))->query('//a') as $link) {
-    $url = $link->getAttribute('href');
-
-    if (str_starts_with($url, '/downloads.php?version=')) {
-        $versions[] = substr(
-            $url,
-            23,
-            3
-        );
-    }
-}
+$versions = array_merge($versions, loadJsonArray('/app/supported-versions.json'));
 
 echo 'Found the following supported versions: ', implode(', ', $versions), PHP_EOL;
 file_put_contents(getenv('GITHUB_OUTPUT'), 'versions=' . json_encode($versions) . "\n", FILE_APPEND);

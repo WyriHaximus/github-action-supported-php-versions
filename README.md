@@ -1,6 +1,11 @@
 # Supported PHP Versions Github Action
 
-Fetches the currently supported PHP versions from php.net
+Outputs the currently supported PHP versions as published on [php.net](https://www.php.net/supported-versions). The list is baked into the Docker image as [`supported-versions.json`](supported-versions.json) (no network call when the action runs).
+
+## Maintaining version data
+
+- **Supported versions:** Run `php bin/update-supported-versions.php` to refresh [`supported-versions.json`](supported-versions.json) from php.net. CI runs the same script with `--check` on every push and pull request. A [weekly workflow](.github/workflows/update-supported-versions.yml) opens a pull request when php.net changes.
+- **Upcoming releases:** Edit [`upcoming-releases.json`](upcoming-releases.json) when you want `upcomingReleases: true` to include pre-release versions before they appear on php.net.
 
 ## Output
 

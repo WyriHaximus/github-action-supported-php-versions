@@ -28,6 +28,14 @@ jobs:
           fi
           echo "${GITHUB_REF##*/}"
           echo "ref=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
+  check-supported-versions:
+    name: Check supported-versions.json
+    runs-on: ubuntu-latest
+    container: ghcr.io/wyrihaximusnet/php:8.4-nts-alpine-slim-root
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Verify supported-versions.json matches php.net
+        run: php bin/update-supported-versions.php --check
   lint-dockerfile:
     name: Lint Dockerfile
     runs-on: ubuntu-latest
@@ -42,6 +50,7 @@ jobs:
     name: Build Docker image
     needs:
       - generate-ref
+      - check-supported-versions
       - lint-dockerfile
     runs-on: ubuntu-latest
     steps:
@@ -52,6 +61,11 @@ jobs:
           docker login ghcr.io \
             --username "${GITHUB_ACTOR}" \
             --password-stdin
+      - name: Detect supported platforms
+        id: platform
+        uses: wyrihaximus/github-action-oci-image-supported-platforms@e85320eed654eed6c3db49c00f866f53c08663a6 # v1.0.0
+        with:
+          dockerfile: Dockerfile
       - name: Set up QEMU
         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
       - name: Set up Docker Buildx
@@ -59,6 +73,7 @@ jobs:
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
         with:
           install: true
+          platforms: ${{ steps.platform.outputs.platform_csv }}
       - name: Inspect builder
         run: |
           echo "Name:      ${{ steps.buildx.outputs.name }}"
@@ -68,10 +83,10 @@ jobs:
           echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
       - run: docker version
       - run: docker images
-      - run: docker build --platform=linux/arm64,linux/amd64 --output=type=registry --no-cache -t "$(echo "ghcr.io/${GITHUB_REPOSITORY}:${{ needs.generate-ref.outputs.ref }}" | tr '[:upper:]' '[:lower:]')" . -f Dockerfile
+      - run: docker build --platform=${{ steps.platform.outputs.platform_csv }} --output=type=registry --no-cache -t "$(echo "ghcr.io/${GITHUB_REPOSITORY}:sha-${GITHUB_SHA}" | tr '[:upper:]' '[:lower:]')" . -f Dockerfile
       - run: |
-          printf "FROM %s" "$(echo "ghcr.io/${GITHUB_REPOSITORY}:${{ needs.generate-ref.outputs.ref }}" | tr '[:upper:]' '[:lower:]')" > Dockerfile.tag
-          docker build --platform=linux/arm64,linux/amd64 --output=type=registry --no-cache -f Dockerfile.tag -t "$(echo "ghcr.io/${GITHUB_REPOSITORY}:sha-${GITHUB_SHA}" | tr '[:upper:]' '[:lower:]')" .
+          printf "FROM %s" "$(echo "ghcr.io/${GITHUB_REPOSITORY}:sha-${GITHUB_SHA}" | tr '[:upper:]' '[:lower:]')" > Dockerfile.tag
+          docker build --platform=${{ steps.platform.outputs.platform_csv }} --output=type=registry --no-cache -f Dockerfile.tag -t "$(echo "ghcr.io/${GITHUB_REPOSITORY}:${{ needs.generate-ref.outputs.ref }}" | tr '[:upper:]' '[:lower:]')" .
       - run: docker images
   fetch-versions:
     name: Fetch Versions
@@ -80,19 +95,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Login to GitHub Container Registry
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | \
-          docker login ghcr.io \
-            --username "${GITHUB_ACTOR}" \
-            --password-stdin
       - run: sed -i "s/:master/:sha-${GITHUB_SHA}/g" action.yml
       - run: cat action.yml
       - name: Fetch Versions
         uses: ./
         id: versions
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Show Versions
         run: echo "${VERSIONS}"
         env:
@@ -106,8 +113,6 @@ jobs:
       - name: Fetch Versions including upcoming releases
         uses: ./
         id: versionsincludingupcomingreleases
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upcomingReleases: true
       - name: Show Versions including upcoming releases
