@@ -1,0 +1,27 @@
+name: Update Supported Versions
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  update-supported-versions:
+    name: Update supported-versions.json
+    runs-on: ubuntu-latest
+    container: ghcr.io/wyrihaximusnet/php:8.4-nts-alpine-slim-root
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Refresh supported-versions.json from php.net
+        run: php bin/update-supported-versions.php
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
+        with:
+          title: Update supported-versions.json from php.net
+          body: |
+            Automated refresh of [supported-versions.json](../supported-versions.json) from https://php.net/supported-versions.
+          branch: automated/update-supported-versions
+          commit-message: Update supported-versions.json from php.net
+          labels: |
+            Automated PR

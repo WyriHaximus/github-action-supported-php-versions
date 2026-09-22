@@ -1,5 +1,5 @@
 name: 'Supported PHP Versions'
-description: 'Fetches the currently supported PHP versions from php.net'
+description: 'Outputs supported PHP versions from data synced with php.net (no runtime fetch)'
 branding:
   icon: 'list'
   color: 'green'
