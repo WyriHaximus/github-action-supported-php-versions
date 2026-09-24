@@ -31,7 +31,7 @@ jobs:
   check-supported-versions:
     name: Check supported-versions.json
     runs-on: ubuntu-latest
-    container: ghcr.io/wyrihaximusnet/php:8.4-nts-alpine-slim-root
+    container: ghcr.io/wyrihaximusnet/php:8.6-nts-alpine-slim-root
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Verify supported-versions.json matches php.net
